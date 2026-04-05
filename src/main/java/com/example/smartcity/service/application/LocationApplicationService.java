@@ -1,7 +1,7 @@
 package com.example.smartcity.service.application;
 
-import com.example.smartcity.model.dto.CreateLocationDto;
-import com.example.smartcity.model.dto.DisplayLocationDto;
+import com.example.smartcity.model.dto.create.CreateLocationDto;
+import com.example.smartcity.model.dto.display.DisplayLocationDto;
 
 import java.util.List;
 import java.util.Optional;

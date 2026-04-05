@@ -1,8 +1,8 @@
 package com.example.smartcity.service.application.impl;
 
 import com.example.smartcity.model.domain.Location;
-import com.example.smartcity.model.dto.CreateLocationDto;
-import com.example.smartcity.model.dto.DisplayLocationDto;
+import com.example.smartcity.model.dto.create.CreateLocationDto;
+import com.example.smartcity.model.dto.display.DisplayLocationDto;
 import com.example.smartcity.service.application.LocationApplicationService;
 import com.example.smartcity.service.domain.LocationService;
 import org.springframework.stereotype.Service;

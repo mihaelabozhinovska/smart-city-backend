@@ -1,4 +1,4 @@
-package com.example.smartcity.model.dto;
+package com.example.smartcity.model.dto.create;
 import lombok.Data;
 @Data
 public class CreateLocationDto {
