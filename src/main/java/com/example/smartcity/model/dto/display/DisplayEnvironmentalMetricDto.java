@@ -14,4 +14,5 @@ public class DisplayEnvironmentalMetricDto {
     private Double windSpeed;
     private LocalDateTime recordedAt;
     private Long locationId;
+    private String locationName;
 }
