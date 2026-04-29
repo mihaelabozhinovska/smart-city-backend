@@ -1,4 +1,4 @@
-package com.example.smartcity.model.dto;
+package com.example.smartcity.model.dto.display;
 
 import lombok.Data;
 

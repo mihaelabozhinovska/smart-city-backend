@@ -1,16 +1,16 @@
 package com.example.smartcity.service.application.impl;
 
-import com.example.smartcity.model.domain.Location;
 import com.example.smartcity.model.domain.Scenario;
 import com.example.smartcity.model.domain.SimulationResult;
-import com.example.smartcity.model.dto.DisplaySimulationResultDto;
+import com.example.smartcity.model.dto.create.SimulateRequestDto;
+import com.example.smartcity.model.dto.display.DisplaySimulationResultDto;
 import com.example.smartcity.service.application.SimulationApplicationService;
 import com.example.smartcity.service.domain.LocationService;
 import com.example.smartcity.service.domain.ScenarioService;
+import com.example.smartcity.service.domain.SimulationEngine;
 import com.example.smartcity.service.domain.SimulationResultService;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,59 +20,39 @@ public class SimulationApplicationServiceImpl implements SimulationApplicationSe
     private final ScenarioService scenarioService;
     private final LocationService locationService;
     private final SimulationResultService simulationResultService;
+    private final SimulationEngine simulationEngine;
 
     public SimulationApplicationServiceImpl(
             ScenarioService scenarioService,
             LocationService locationService,
-            SimulationResultService simulationResultService
+            SimulationResultService simulationResultService,
+            SimulationEngine simulationEngine
     ) {
         this.scenarioService = scenarioService;
         this.locationService = locationService;
         this.simulationResultService = simulationResultService;
+        this.simulationEngine = simulationEngine;
+    }
+
+    @Override
+    public DisplaySimulationResultDto simulate(SimulateRequestDto request) {
+        return simulationEngine.simulate(request);
     }
 
     @Override
     public DisplaySimulationResultDto runSimulation(Long scenarioId) {
-
         Scenario scenario = scenarioService.findById(scenarioId)
                 .orElseThrow(() -> new RuntimeException("Scenario not found"));
 
-        Location location = scenario.getLocation();
+        SimulateRequestDto request = new SimulateRequestDto();
+        request.setType("traffic");
+        request.setTrafficMultiplier(scenario.getTrafficMultiplier());
+        request.setTemperatureDelta(scenario.getTemperatureDelta());
+        request.setPollutionMultiplier(scenario.getPollutionMultiplier());
+        request.setRoadClosure(scenario.getRoadClosure());
+        request.setLocationId(scenario.getLocation().getId());
 
-        // 🔥 MOCK LOGIC (најважно)
-        double baseTemp = 25;
-        double basePollution = 80;
-        double baseTraffic = 100;
-
-        double predictedTemp = baseTemp + (scenario.getTemperatureDelta() != null ? scenario.getTemperatureDelta() : 0);
-        double predictedPollution = basePollution * (scenario.getPollutionMultiplier() != null ? scenario.getPollutionMultiplier() : 1);
-        double predictedTraffic = baseTraffic * (scenario.getTrafficMultiplier() != null ? scenario.getTrafficMultiplier() : 1);
-
-        if (Boolean.TRUE.equals(scenario.getRoadClosure())) {
-            predictedTraffic += 50;
-        }
-
-        String heatRisk = predictedTemp > 35 ? "HIGH" : "LOW";
-        String airRisk = predictedPollution > 120 ? "HIGH" : "LOW";
-        String trafficRisk = predictedTraffic > 150 ? "HIGH" : "LOW";
-
-        String overall = (heatRisk.equals("HIGH") || airRisk.equals("HIGH") || trafficRisk.equals("HIGH"))
-                ? "HIGH"
-                : "LOW";
-
-        SimulationResult result = new SimulationResult();
-        result.setPredictedTemperature(predictedTemp);
-        result.setPredictedPollution(predictedPollution);
-        result.setPredictedTraffic(predictedTraffic);
-        result.setHeatRiskLevel(heatRisk);
-        result.setAirRiskLevel(airRisk);
-        result.setTrafficRiskLevel(trafficRisk);
-        result.setOverallRiskLevel(overall);
-        result.setGeneratedAt(LocalDateTime.now());
-        result.setScenario(scenario);
-        result.setLocation(location);
-
-        return toDto(simulationResultService.save(result));
+        return simulationEngine.simulate(request);
     }
 
     @Override

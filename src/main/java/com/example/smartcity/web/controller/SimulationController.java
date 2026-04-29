@@ -1,7 +1,9 @@
 package com.example.smartcity.web.controller;
 
-import com.example.smartcity.model.dto.DisplaySimulationResultDto;
+import com.example.smartcity.model.dto.display.DisplaySimulationResultDto;
 import com.example.smartcity.service.application.SimulationApplicationService;
+import com.example.smartcity.model.dto.create.SimulateRequestDto;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,4 +27,10 @@ public class SimulationController {
     public List<DisplaySimulationResultDto> findAll() {
         return simulationApplicationService.findAll();
     }
+
+    @PostMapping("/simulate")
+    public DisplaySimulationResultDto simulate(@RequestBody SimulateRequestDto request) {
+        return simulationApplicationService.simulate(request);
+    }
+
 }
